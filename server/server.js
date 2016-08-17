@@ -1,3 +1,5 @@
+"use strict"
+
 const express =  require('express');
 const bp = require('body-parser');
 const cors = require('cors');

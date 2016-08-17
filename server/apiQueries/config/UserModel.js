@@ -1,7 +1,9 @@
-var Sequelize = require('sequelize');
-var db = require('./dbconnect.js');
+"use strict"
 
-var User = db.define('user', {
+const Sequelize = require('sequelize');
+const db = require('./dbconnect.js');
+
+const User = db.define('user', {
   username: {type: Sequelize.STRING(20), unique: true},
   password: {type: Sequelize.STRING(100)},
   email: Sequelize.STRING,

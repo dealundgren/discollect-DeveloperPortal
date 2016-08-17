@@ -1,8 +1,10 @@
-var Sequelize = require('sequelize');
-var db = require('./dbconnect.js');
-var User = require('./UserModel.js');
+"use strict"
 
-var Listing = db.define('Listing', {
+const Sequelize = require('sequelize');
+const db = require('./dbconnect.js');
+const User = require('./UserModel.js');
+
+const Listing = db.define('Listing', {
   title: {type: Sequelize.STRING(30)},
   zipcode: Sequelize.INTEGER,
   takerId: { type: Sequelize.INTEGER, defaultValue: null },

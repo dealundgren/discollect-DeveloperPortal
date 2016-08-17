@@ -1,3 +1,5 @@
+"use strict"
+
 const Sequelize = require('sequelize');
 const db = require('./dbconnect.js');
 const Listing = require('./ListingModel.js');

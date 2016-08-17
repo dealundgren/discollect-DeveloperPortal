@@ -1,3 +1,5 @@
+"use strict"
+
 const maindb = require('./config/dbconnect.js');
 const Listing = require('./config/ListingModel.js');
 const User = require('./config/UserModel.js');

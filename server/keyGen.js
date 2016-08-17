@@ -1,3 +1,5 @@
+"use strict"
+
 module.exports = keyGenerator = () => {
 	const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'.split('');
 	let key = '';
