@@ -1,6 +1,6 @@
 "use strict"
 
-module.exports = keyGenerator = () => {
+const keyGenerator = () => {
 	const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'.split('');
 	let key = '';
 	for (let i=0; i<32; i++) {
@@ -8,3 +8,5 @@ module.exports = keyGenerator = () => {
 	}
 	return key;
 }
+
+module.exports = keyGenerator;
