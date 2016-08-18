@@ -95,7 +95,6 @@ module.exports = {
         order: [['createdAt', 'DESC']],
       })
       .then((catClicks) => {
-        // lets filter some things!
         let counts = catClicks.reduce((all, clickItem) => {
           if (all[clickItem.listingId]) {
             all[clickItem.listingId]++

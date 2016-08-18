@@ -1,3 +1,5 @@
+"use strict"
+
 const Key = require('./KeyModel.js');
 
 const lock = (req, res, next) => {

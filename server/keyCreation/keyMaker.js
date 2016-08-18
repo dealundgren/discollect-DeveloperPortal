@@ -1,3 +1,5 @@
+"use strict"
+
 const Key = require('../config/KeyModel.js');
 
 module.exports = {

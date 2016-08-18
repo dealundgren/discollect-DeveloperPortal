@@ -6,10 +6,7 @@ const seq = require('sequelize');
 const Cron = require('cron').CronJob;
 
 const resetRequests = () => {
-    db.query('UPDATE keyholders SET requests = 0', { type: seq.QueryTypes.UPDATE})
-    .then((resp) => {
-      console.log(resp);
-    });
+    db.query('UPDATE keyholders SET requests = 0', { type: seq.QueryTypes.UPDATE});
 }
 
 const reset = new Cron('* 0 0 * * *', () => {

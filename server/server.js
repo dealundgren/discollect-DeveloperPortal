@@ -2,7 +2,6 @@
 
 const bp = require('body-parser');
 const cors = require('cors');
-// const cron = require('node-cron');
 const express =  require('express');
 
 const dataRoutes = require('./dataRoutes.js');
