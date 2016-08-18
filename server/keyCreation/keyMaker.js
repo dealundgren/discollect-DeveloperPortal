@@ -3,7 +3,7 @@
 const Key = require('../config/KeyModel.js');
 
 module.exports = {
-  createNewAPIKey: (email, limit = 200, res) => {
+  createNewAPIKey: (email, limit, res) => {
     Key.findOne({
       where: {
         email: email,
@@ -15,7 +15,7 @@ module.exports = {
       } else {
         Key.create({
           email: email,
-          reqLimit: limit,
+          reqLimit: limit || 200,
         })
         .then((something) => {
           res.send(JSON.stringify(something));

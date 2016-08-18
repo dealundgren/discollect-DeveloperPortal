@@ -6,7 +6,7 @@ const keyGenerator = require('../keyCreation/keyGen.js');
 
 const Keyholder = db.define('keyholder', {
   email: { type: Sequelize.STRING, allowNull: false, unique: true},
-  key: { type: Sequelize.STRING },
+  key: { type: Sequelize.STRING, defaultValue: 0 },
   requests: Sequelize.INTEGER,
   reqLimit: Sequelize.INTEGER,
 });
