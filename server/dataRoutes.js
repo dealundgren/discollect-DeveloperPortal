@@ -1,24 +1,24 @@
 "use strict"
 
 const router = require('express').Router();
-const apiKeyGenerator = require('./keyGen.js');
 const q = require('./apiQueries/basicQueries.js');
 
-router.get('/:apiKey/user', (req, res) => {
-  let apiKey = req.params.apiKey;
+router.get('/user', (req, res) => {
   let userId = req.query.userId;
   q.getUserReferences(userId, res);
 });
 
-router.get('/:apiKey/listing', (req, res) => {
-  let apiKey = req.params.apiKey;
+router.get('/listing', (req, res) => {
   let listingId = req.query.listingId;
   q.getListingReferences(listingId, res);
 });
 
-router.get('/:apiKey/category', (req, res) => {
-  let apiKey = req.params.apiKey;
+router.get('/category', (req, res) => {
   q.clicksByCategory(req.query, res);
+});
+
+router.get('/test', (req, res) => {
+  res.send('thanks');
 });
 
 

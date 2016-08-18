@@ -1,7 +1,7 @@
 "use strict"
 
 const router = require('express').Router();
-const apiKeyGenerator = require('./keyGen.js');
+const _k = require('./keyCreation/keyMaker.js');
 
 router.get('/', (req, res) => {
   // a get request should send back whether this is a valid key. Or better yet, just act as a middleware for validating that key
@@ -10,8 +10,7 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
   let email = req.body.email;
-  let key = apiKeyGenerator();
-  res.send('here is your key: ' + key);
+  _k.createNewAPIKey(email, 200, res);
 });
 
 module.exports = router;

@@ -1,9 +1,9 @@
 "use strict"
 
-const maindb = require('./config/dbconnect.js');
-const Listing = require('./config/ListingModel.js');
-const User = require('./config/UserModel.js');
-const Clicks = require('./config/ClickModel.js');
+const maindb = require('../config/dbconnect.js');
+const Listing = require('../config/ListingModel.js');
+const User = require('../config/UserModel.js');
+const Clicks = require('../config/ClickModel.js');
 
 const timeReference = {
   hour: (new Date(new Date() - 60 * 60 * 1000)),

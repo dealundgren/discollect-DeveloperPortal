@@ -1,7 +1,7 @@
 "use strict"
 
 const Sequelize = require('sequelize');
-// const secrets = require('../../../secrets.js') || {};
+// const secrets = require('../../secrets.js');
 const secrets = {};
 
 let dbpassword = process.env.dbpassword;
