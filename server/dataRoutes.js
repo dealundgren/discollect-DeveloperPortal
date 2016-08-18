@@ -17,8 +17,12 @@ router.get('/category', (req, res) => {
   q.clicksByCategory(req.query, res);
 });
 
+router.get('/time/category', (req, res) => {
+  q.clicksOverTime(req.query, res);
+});
+
 router.get('/test', (req, res) => {
-  res.send('thanks');
+  res.send('success!')
 });
 
 

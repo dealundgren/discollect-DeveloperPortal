@@ -2,6 +2,7 @@
 
 const maindb = require('../config/dbconnect.js');
 const Listing = require('../config/ListingModel.js');
+const seq = require('sequelize');
 const User = require('../config/UserModel.js');
 const Clicks = require('../config/ClickModel.js');
 
@@ -9,10 +10,24 @@ const timeReference = {
   hour: (new Date(new Date() - 60 * 60 * 1000)),
   day: (new Date(new Date() - 24 * 60 * 60 * 1000)),
   month: (new Date(new Date() - 24 * 60 * 60 * 1000 * 30)),
+  month3: this.month * 3,
+  month6: this.month * 6,
   year: (new Date(new Date() - 24 * 60 * 60 * 1000 * 365)),
 }
+const allCategories = ['appliances', 'fashion', 'furniture', 'books', 'electronics', 'tools'];
 
 module.exports = {
+  allClicks: function (res) {
+    Clicks.findAll({
+      attributes: ['userId', 'createdAt'],
+      include: [{
+          model: Listing,
+      }]
+    })
+    .then((results) => {
+      res.send(results);
+    })
+  },
   getListingReferences: function (listingId, res) {
     Listing.findAll({
       attributes: ['id', 'title', 'category', 'createdAt', 'zipcode', 'category'],
@@ -58,71 +73,47 @@ module.exports = {
       })
     });
   },
-  clicksByCategory: function (query, res) {
-    let category = query.cat;
+  clicksOverTime: (query, res) => {
+    let category = query.cat === 'all-categories' ? allCategories : query.cat;
     let earliestDate = timeReference[query.past] || 0;
     if (!Array.isArray(query.cat)) {
       category = [category];
     }
-    Listing.findAll({
-      attributes: ['id','category','createdAt'],
+    Clicks.findAll({
       where: {
-        category: {
-          $in: category,
+        createdAt: {
+          $lt: new Date(),
+          $gt: earliestDate,
         },
       },
+      include: [{
+          model: Listing,
+          where: {
+            category: {
+              $in: category,
+            }
+          },
+      }],
       order: [['createdAt', 'DESC']],
     })
     .then((results) => {
-      let output = results.filter((item) => {
-        return new Date(item.createdAt) > earliestDate;
-      })
-      return output;
-    })
-    .then((catIds) => {
-      let itemIds = catIds.reduce((all, item) => {
-        all.push(item.id)
-        return all;
-      }, []);
-      // catIds is the object style I want
-      Clicks.findAll({
-        attributes: ['userId','listingId','createdAt'],
-        where: {
-          listingId: {
-            $in: itemIds,
-          },
-        },
-        order: [['createdAt', 'DESC']],
-      })
-      .then((catClicks) => {
-        let counts = catClicks.reduce((all, clickItem) => {
-          if (all[clickItem.listingId]) {
-            all[clickItem.listingId]++
-          } else {
-            all[clickItem.listingId] = 1;
-          }
-          return all;
-        }, {});
-        let output = catIds.reduce((all, item) => {
-          if(all[item.category]) {
-            all[item.category] += counts[item.id+''] || 0;
-          } else {
-            all[item.category] = counts[item.id+''] || 0;
-          }
-          return all;
-        }, {});
-        let labels = [];
-        let data = [];
-        for (let key in output) {
-          labels.push(key);
-          data.push(output[key]);
+      return results.reduce((all, item) => {
+        if(all[item.Listing.category]) {
+          all[item.Listing.category]++;
+        } else {
+          all[item.Listing.category] = 1;
         }
-        res.send(JSON.stringify({
-          label: `Clicks by ${query.past}`,
-          data: data, // array of data values
-          labels: labels, // array of labels associated with that data
-        }));
-      })
-    });
-  },
+        return all;
+      }, {})
+    })
+    .then((results) => {
+      let labels = [];
+      let data = [];
+      for (let category in results) {
+        labels.push(category);
+        data.push(results[category]);
+      }
+      res.send({data, labels, label: `Clicks by Category per ${query.past}`});
+    })
+  }
 };
