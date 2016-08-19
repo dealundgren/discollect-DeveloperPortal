@@ -14,7 +14,7 @@ const lock = (req, res, next) => {
     .then((results) => {
       if (!results) {
         res.sendStatus(401);
-      } else if(results.requests >= results.limit) {
+      } else if(results.requests >= results.reqLimit) {
         res.sendStatus(429);
       } else {
         Key.findOne({

@@ -10,14 +10,14 @@ const timeReference = {
   hour: (new Date(new Date() - 60 * 60 * 1000)),
   day: (new Date(new Date() - 24 * 60 * 60 * 1000)),
   month: (new Date(new Date() - 24 * 60 * 60 * 1000 * 30)),
-  month3: this.month * 3,
-  month6: this.month * 6,
+  month3: (new Date(new Date() - 24 * 60 * 60 * 1000 * 30)) * 3,
+  month6: (new Date(new Date() - 24 * 60 * 60 * 1000 * 30)) * 6,
   year: (new Date(new Date() - 24 * 60 * 60 * 1000 * 365)),
 }
 const allCategories = ['appliances', 'fashion', 'furniture', 'books', 'electronics', 'tools'];
 
 module.exports = {
-  allClicks: function (res) {
+  allClicks: (res) => {
     Clicks.findAll({
       attributes: ['userId', 'createdAt'],
       include: [{
@@ -28,7 +28,36 @@ module.exports = {
       res.send(results);
     })
   },
-  getListingReferences: function (listingId, res) {
+  allListings: (res) => {
+    Listing.findAll({
+      attributes: ['id', 'title', 'category', 'createdAt', 'zipcode'],
+      order: [['id', 'DESC']],
+    })
+    .then((results) => {
+      res.send(results);
+    })
+  },
+  getUserReferencesByCategory: (userId, res) => {
+    Listing.findAll({
+      attributes: ['id', 'title', 'category', 'createdAt', 'zipcode'],
+      where: {
+        giverId: userId,
+      },
+      order: [['id', 'DESC']],
+    })
+    .then((results) => {
+      let output = results.reduce((all, item) => {
+        if (all[item.category]) {
+          all[item.category].push(item);
+        } else {
+          all[item.category] = [item];
+        }
+        return all;
+      }, {})
+      res.send(output);
+    })
+  },
+  getListingReferences: (listingId, res) => {
     Listing.findAll({
       attributes: ['id', 'title', 'category', 'createdAt', 'zipcode', 'category'],
       where: {
@@ -73,7 +102,7 @@ module.exports = {
       })
     });
   },
-  clicksOverTime: (query, res) => {
+  clicksOverTimeByCategory: (query, res) => {
     let category = query.cat === 'all-categories' ? allCategories : query.cat;
     let earliestDate = timeReference[query.past] || 0;
     if (!Array.isArray(query.cat)) {
@@ -114,6 +143,13 @@ module.exports = {
         data.push(results[category]);
       }
       res.send({data, labels, label: `Clicks by Category per ${query.past}`});
+    })
+  },
+  listingsByZip: (res) => {
+    Listings.findAll({
+      attributes: {
+
+      }
     })
   }
 };

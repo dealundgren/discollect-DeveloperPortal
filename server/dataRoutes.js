@@ -8,9 +8,22 @@ router.get('/user', (req, res) => {
   q.getUserReferences(userId, res);
 });
 
+router.get('/user/category', (req, res) => {
+  let userId = req.query.userId;
+  q.getUserReferencesByCategory(userId, res);
+});
+
 router.get('/listing', (req, res) => {
   let listingId = req.query.listingId;
   q.getListingReferences(listingId, res);
+});
+
+router.get('/all/clicks', (req, res) => {
+  q.allClicks(res);
+});
+
+router.get('/all/listings', (req, res) => {
+  q.allListings(res);
 });
 
 router.get('/category', (req, res) => {
@@ -18,12 +31,11 @@ router.get('/category', (req, res) => {
 });
 
 router.get('/time/category', (req, res) => {
-  q.clicksOverTime(req.query, res);
+  q.clicksOverTimeByCategory(req.query, res);
 });
 
 router.get('/test', (req, res) => {
   res.send('success!')
 });
-
 
 module.exports = router;
