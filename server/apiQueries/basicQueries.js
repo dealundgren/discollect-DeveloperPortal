@@ -10,9 +10,42 @@ const timeReference = {
   hour: (new Date(new Date() - 60 * 60 * 1000)),
   day: (new Date(new Date() - 24 * 60 * 60 * 1000)),
   month: (new Date(new Date() - 24 * 60 * 60 * 1000 * 30)),
-  month3: (new Date(new Date() - 24 * 60 * 60 * 1000 * 30)) * 3,
-  month6: (new Date(new Date() - 24 * 60 * 60 * 1000 * 30)) * 6,
+  time: ((new Date(new Date() - 24 * 60 * 60 * 1000 * 30 * 3))),
+  time: ((new Date(new Date() - 24 * 60 * 60 * 1000 * 30 * 6))),
   year: (new Date(new Date() - 24 * 60 * 60 * 1000 * 365)),
+}
+
+const timeSeparations = {
+  hour: {
+    time: (new Date(new Date() - 60 * 60 * 1000)),
+    split: (60 * 1000 * 6),
+    divisions: 10,
+  },
+  day: {
+    time: (new Date(new Date() - 24 * 60 * 60 * 1000)),
+    split: (60 * 60 * 1000 * 2),
+    divisions: 12,
+  },
+  month: {
+    time:(new Date(new Date() - 24 * 60 * 60 * 1000 * 30)),
+    split: (24 * 60 * 15 * 1000 * 30),
+    divisions: 4,
+  },
+  month3: {
+    time: ((new Date(new Date() - 24 * 60 * 60 * 1000 * 30 * 3))),
+    split: (24 * 60 * 60 * 1000 * 30),
+    divisions: 3,
+  },
+  month6: {
+    time: ((new Date(new Date() - 24 * 60 * 60 * 1000 * 30 * 6))),
+    split:(24 * 60 * 60 * 1000 * 30),
+    divisions: 6,
+  },
+  year: {
+    time: (new Date(new Date() - 24 * 60 * 60 * 1000 * 365)),
+    split: ((24 * 60 * 60 * 1000 * 365) / 12),
+    divisions: 12,
+  },
 }
 const allCategories = ['appliances', 'fashion', 'furniture', 'books', 'electronics', 'tools'];
 
@@ -144,6 +177,52 @@ module.exports = {
       }
       res.send({data, labels, label: `Clicks by Category per ${query.past}`});
     })
+  },
+  clicksOverTimeBySingleCategory: (query, res) => {
+    let category = query.cat === 'all-categories' ? allCategories : [query.cat];
+    let past = query.past;
+    let earliestDate = timeReference[past] || 0;
+    Clicks.findAll({
+      attributes: ['createdAt', 'id'],
+      where: {
+        createdAt: {
+          $lt: new Date(),
+          $gt: earliestDate,
+        },
+      },
+      include: [{
+          model: Listing,
+          attributes: [],
+          where: {
+            category: {
+              $in: category,
+            }
+          },
+      }],
+      order: [['createdAt', 'DESC']],
+    })
+    .then((results) => {
+      let template = timeSeparations[past];
+      let now = new Date();
+      let output = [];
+      for (let i=1; i <= template.divisions; i++) {
+        let a = results.filter((item) => {
+          let tempDate = new Date(item.createdAt);
+          let lowerLimit = now.getTime() - (template.split * i);
+          let upperLimit = now.getTime() - (template.split * (i - 1));
+          // console.log('now', now.getTime());
+          // console.log('upper limit', upperLimit);
+          // console.log('created at:', tempDate.getTime());
+          // console.log('lower limit:', lowerLimit);
+          // console.log('===================================')
+          // console.log(' ');
+          // console.log(' ')
+          return upperLimit > tempDate.getTime() && tempDate.getTime() > lowerLimit;
+        });
+        output.push(a.length);
+      }
+      res.send(output);
+    });
   },
   listingsByZip: (res) => {
     Listings.findAll({

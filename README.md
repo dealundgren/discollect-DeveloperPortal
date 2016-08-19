@@ -129,11 +129,20 @@ Response:
   }, ...
 
 ###/time/category
-Receive list of all Listings
+Receive list of all Listings from given categories over given timeframe
 
 ####SAMPLE:
 GET request:
-api/YOUR_API_KEY_HERE/time/category?cat=all-categories&past=day
+api/YOUR_API_KEY_HERE/time/category?cat=appliances&cat=furniture&past=day
+
+Optional time frames:
+hour
+
+day
+
+month
+
+year
 
 Response:
 {
@@ -155,3 +164,35 @@ Response:
   ],
   "label": "Clicks by Category per day"
 }
+
+###/category/time
+Receive array of clicks on a category over a given period, separated by given time frames
+
+####SAMPLE:
+GET request:
+api/YOUR_API_KEY_HERE/category/time?cat=appliances&past=day
+
+Optional time frames:
+hour
+
+day
+
+month
+
+year
+
+Response:
+[
+  0,
+  2,
+  225,
+  1234,
+  678,
+  567,
+  345,
+  12,
+  678,
+  1456,
+  90,
+  2
+]
