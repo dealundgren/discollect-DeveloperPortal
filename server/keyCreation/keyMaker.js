@@ -22,5 +22,23 @@ module.exports = {
         })
       }
     });
+  },
+  validateKeyholder: (email, res) => {
+    Key.findOne({
+      where: {
+        email: email,
+      }
+    })
+    .then((results) => {
+      if(!results) {
+        res.send({valid: false});
+      } else {
+        res.send({
+          valid: true,
+          requests: results.requests,
+          reqLimit: results.reqLimit,
+        });
+      }
+    })
   }
 }

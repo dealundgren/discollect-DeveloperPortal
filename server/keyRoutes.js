@@ -8,6 +8,10 @@ router.get('/', (req, res) => {
   res.send('here\'s a key! 0--nnn');
 });
 
+router.get('/keyholder', (req, res) => {
+  _k.validateKeyholder(req.query.email, res);
+});
+
 router.post('/', (req, res) => {
   let email = req.body.email;
   _k.createNewAPIKey(email, 200, res);
