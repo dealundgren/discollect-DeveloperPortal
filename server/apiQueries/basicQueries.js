@@ -6,20 +6,26 @@ const seq = require('sequelize');
 const User = require('../config/UserModel.js');
 const Clicks = require('../config/ClickModel.js');
 
-const timeReference = {
-  hour: (new Date(new Date() - 60 * 60 * 1000)),
-  day: (new Date(new Date() - 24 * 60 * 60 * 1000)),
-  month: (new Date(new Date() - 24 * 60 * 60 * 1000 * 30)),
-  time: ((new Date(new Date() - 24 * 60 * 60 * 1000 * 30 * 3))),
-  time: ((new Date(new Date() - 24 * 60 * 60 * 1000 * 30 * 6))),
-  year: (new Date(new Date() - 24 * 60 * 60 * 1000 * 365)),
-}
-
 const timeSeparations = {
   hour: {
     time: (new Date(new Date() - 60 * 60 * 1000)),
     split: (60 * 1000 * 6),
     divisions: 10,
+    labels: [
+      '00:00 - 02:00',
+      '02:00 - 04:00',
+      '04:00 - 06:00',
+      '06:00 - 08:00',
+      '08:00 - 10:00',
+      '10:00 - 12:00',
+      '12:00 - 14:00',
+      '14:00 - 16:00',
+      '16:00 - 18:00',
+      '18:00 - 20:00',
+      '20:00 - 22:00',
+      '22:00 - 24:00',
+
+    ],
   },
   day: {
     time: (new Date(new Date() - 24 * 60 * 60 * 1000)),
@@ -137,7 +143,7 @@ module.exports = {
   },
   clicksOverTimeByCategory: (query, res) => {
     let category = query.cat === 'all-categories' ? allCategories : query.cat;
-    let earliestDate = timeReference[query.past] || 0;
+    let earliestDate = timeSeparations[query.past].time || 0;
     if (!Array.isArray(query.cat)) {
       category = [category];
     }
@@ -181,7 +187,7 @@ module.exports = {
   clicksOverTimeBySingleCategory: (query, res) => {
     let category = query.cat === 'all-categories' ? allCategories : [query.cat];
     let past = query.past;
-    let earliestDate = timeReference[past] || 0;
+    let earliestDate = timeSeparations[past] || 0;
     Clicks.findAll({
       attributes: ['createdAt', 'id'],
       where: {
@@ -210,18 +216,14 @@ module.exports = {
           let tempDate = new Date(item.createdAt);
           let lowerLimit = now.getTime() - (template.split * i);
           let upperLimit = now.getTime() - (template.split * (i - 1));
-          // console.log('now', now.getTime());
-          // console.log('upper limit', upperLimit);
-          // console.log('created at:', tempDate.getTime());
-          // console.log('lower limit:', lowerLimit);
-          // console.log('===================================')
-          // console.log(' ');
-          // console.log(' ')
           return upperLimit > tempDate.getTime() && tempDate.getTime() > lowerLimit;
         });
         output.push(a.length);
       }
-      res.send(output);
+      // build labels for chart
+      let labels = template.labels;
+      let label = `${query.cat} over the last ${past}`;
+      res.send({data: output, labels, label});
     });
   },
   listingsByZip: (res) => {
