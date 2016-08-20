@@ -228,6 +228,7 @@ module.exports = {
       res.send({data, labels, label: `Clicks by Category per ${query.past}`});
     })
   },
+
   clicksOverTimeBySingleCategory: (query, res) => {
     let category = query.cat === 'all-categories' ? allCategories : [query.cat];
     let past = query.past;
@@ -267,9 +268,11 @@ module.exports = {
       // build labels for chart
       let labels = template.labels;
       let label = `${query.cat} over the last ${past}`;
-      res.send({data: output, labels, label});
+      res.send({data: output, labels, label, test: results.length});
+      // res.send(''+results.length);
     });
   },
+
   listingsByZip: (res) => {
     Listings.findAll({
       attributes: {
