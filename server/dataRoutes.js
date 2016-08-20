@@ -42,4 +42,9 @@ router.get('/test', (req, res) => {
   res.send('success!')
 });
 
+router.get('/time', (req, res) => {
+  let now = new Date();
+  res.send(now);
+});
+
 module.exports = router;
